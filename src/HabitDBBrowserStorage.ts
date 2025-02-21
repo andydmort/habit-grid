@@ -1,0 +1,67 @@
+import type { HabitDB, HabitRecord } from "./HabitDB";
+
+export class HabitDBBrowserStorage implements HabitDB {
+  private storageKey = "habit-tracker-data";
+
+  constructor() {
+    // Initialize storage if not present
+    if (!localStorage.getItem(this.storageKey)) {
+      localStorage.setItem(this.storageKey, JSON.stringify([]));
+    }
+  }
+
+  // Load all records from LocalStorage
+  private loadRecords(): HabitRecord[] {
+    const data = localStorage.getItem(this.storageKey);
+    return data ? JSON.parse(data) : [];
+  }
+
+  // Save all records to LocalStorage
+  private saveRecords(records: HabitRecord[]): void {
+    localStorage.setItem(this.storageKey, JSON.stringify(records));
+  }
+
+  // Add or update a habit record
+  async addRecord(record: HabitRecord): Promise<void> {
+    const records = this.loadRecords();
+    const index = records.findIndex((r) => r.date === record.date);
+
+    if (index !== -1) {
+      records[index] = record; // Update existing record
+    } else {
+      records.push(record); // Add new record
+    }
+
+    this.saveRecords(records);
+  }
+
+  // Get record for a specific date
+  async getRecordByDate(date: string): Promise<HabitRecord | null> {
+    const records = this.loadRecords();
+    return records.find((r) => r.date === date) || null;
+  }
+
+  // Get records within a date range
+  async getRecordsByDateRange(startDate: string, endDate: string): Promise<HabitRecord[]> {
+    const records = this.loadRecords();
+    const start = new Date(startDate).getTime();
+    const end = new Date(endDate).getTime();
+
+    return records.filter((record) => {
+      const recordDate = new Date(record.date).getTime();
+      return recordDate >= start && recordDate <= end;
+    });
+  }
+
+  // Remove a record by date
+  removeRecordByDate(date: string): void {
+    let records = this.loadRecords();
+    records = records.filter((r) => r.date !== date);
+    this.saveRecords(records);
+  }
+
+  // Clear all records (useful for debugging/reset)
+  clearAllRecords(): void {
+    localStorage.removeItem(this.storageKey);
+  }
+}
