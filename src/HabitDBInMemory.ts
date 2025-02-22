@@ -1,12 +1,17 @@
+/**
+ * HabitDBInMemory.ts
+ */
 import type { HabitDB, HabitRecord } from "./HabitDB";
 
 
 export class HabitDBInMemory implements HabitDB {
   private records: Map<string, HabitRecord>;
+  private goals: Set<string>;
   private onChangeHandlers: Array<Function> = [];
 
   constructor() {
     this.records = new Map();
+    this.goals = new Set();
   }
 
   private runOnChangeHandlers(){
@@ -37,5 +42,23 @@ export class HabitDBInMemory implements HabitDB {
       const recordDate = new Date(record.date).getTime();
       return recordDate >= start && recordDate <= end;
     });
+  }
+
+  async addGoal(goalName: string): Promise<void> {
+    if (!this.goals.has(goalName)) {
+      this.goals.add(goalName);
+      this.runOnChangeHandlers();
+    }
+  }
+
+  async removeGoal(goalName: string): Promise<void> {
+    if (this.goals.has(goalName)) {
+      this.goals.delete(goalName);
+      this.runOnChangeHandlers();
+    }
+  }
+
+  async getGoals(): Promise<string[]> {
+    return Array.from(this.goals);
   }
 }

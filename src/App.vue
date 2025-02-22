@@ -4,6 +4,8 @@ import Box from './components/Box.vue';
 import Week from './components/Week.vue';
 import HabitModal from './components/HabitModal.vue';
 import { HabitDBBrowserStorage } from './HabitDBBrowserStorage';
+import GoalDropdown from "./components/GoalDropDown.vue";
+
 
 const handleBoxClick = ()=>{
   console.log("clicked on box");
@@ -27,6 +29,7 @@ const onCloseModal = ()=>{
   <Box
     @clicked="handleBoxClick" 
   />
+  <GoalDropdown :goals="['one', 'two']" />
   <Week
     :habitDB=habitStorage
     color="bg-blue-500" 

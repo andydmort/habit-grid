@@ -11,4 +11,7 @@ export interface HabitDB {
   getRecordByDate(date: string): Promise<HabitRecord | null>;
   getRecordsByDateRange(startDate: string, endDate: string): Promise<HabitRecord[]>;
   addOnDbChange(func: Function): void;
+  addGoal(goalName: string): Promise<void>;
+  removeGoal(goalName: string): Promise<void>;
+  getGoals(goalname: string): Promise<string[]>;
 }

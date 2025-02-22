@@ -2,6 +2,7 @@ import type { HabitDB, HabitRecord } from "./HabitDB";
 
 export class HabitDBBrowserStorage implements HabitDB {
   private storageKey = "habit-tracker-data";
+  private goalsKey = "habit-tracker-goals";
   private onChangeHandlers: Array<Function> = [];
 
 
@@ -76,4 +77,25 @@ export class HabitDBBrowserStorage implements HabitDB {
   clearAllRecords(): void {
     localStorage.removeItem(this.storageKey);
   }
+
+  async addGoal(goalName: string): Promise<void> {
+    let goals = JSON.parse(localStorage.getItem(this.goalsKey) || "[]");
+    if (!goals.includes(goalName)) {
+      goals.push(goalName);
+      localStorage.setItem(this.goalsKey, JSON.stringify(goals));
+      this.runOnChangeHandlers();
+    }
+  }
+
+  async removeGoal(goalName: string): Promise<void> {
+    let goals = JSON.parse(localStorage.getItem(this.goalsKey) || "[]");
+    goals = goals.filter((goal: string) => goal !== goalName);
+    localStorage.setItem(this.goalsKey, JSON.stringify(goals));
+    this.runOnChangeHandlers();
+  }
+
+  async getGoals(): Promise<string[]> {
+    return JSON.parse(localStorage.getItem(this.goalsKey) || "[]");
+  }
+  
 }
