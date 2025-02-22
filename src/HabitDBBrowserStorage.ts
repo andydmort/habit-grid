@@ -2,12 +2,22 @@ import type { HabitDB, HabitRecord } from "./HabitDB";
 
 export class HabitDBBrowserStorage implements HabitDB {
   private storageKey = "habit-tracker-data";
+  private onChangeHandlers: Array<Function> = [];
+
 
   constructor() {
     // Initialize storage if not present
     if (!localStorage.getItem(this.storageKey)) {
       localStorage.setItem(this.storageKey, JSON.stringify([]));
     }
+  }
+
+  private runOnChangeHandlers(){
+    this.onChangeHandlers.forEach((func)=>{func();});
+  }
+
+  addOnDbChange(func: Function): void {
+    this.onChangeHandlers.push(func);
   }
 
   // Load all records from LocalStorage
@@ -33,6 +43,7 @@ export class HabitDBBrowserStorage implements HabitDB {
     }
 
     this.saveRecords(records);
+    this.runOnChangeHandlers();
   }
 
   // Get record for a specific date
@@ -58,6 +69,7 @@ export class HabitDBBrowserStorage implements HabitDB {
     let records = this.loadRecords();
     records = records.filter((r) => r.date !== date);
     this.saveRecords(records);
+    this.runOnChangeHandlers();
   }
 
   // Clear all records (useful for debugging/reset)

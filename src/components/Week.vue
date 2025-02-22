@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+/**
+ * Week.vue
+ */
+import { ref, onMounted, computed } from "vue";
 import Box from './Box.vue';
 import type { HabitDB, HabitRecord } from "../HabitDB.ts"
 
@@ -10,9 +13,14 @@ const props = defineProps<{
   mondayDate?: Date; // The date for Monday in the week. This represents the start of the week.
 }>();
 
+const emit = defineEmits<{
+  "day-clicked": [value: string]
+}>();
+
+
 const tracker = props.habitDB;
 const weekDays = ref<string[]>([]);
-const habitsForWeek = ref<HabitRecord[]>([]);
+const habitsForWeek = ref<Array<HabitRecord>>([]);
 
 // Get the start of the current week (Monday)
 const getWeekStartDate = (): Date => {
@@ -36,25 +44,41 @@ const loadWeekHabits = async () => {
   habitsForWeek.value = await tracker.getRecordsByDateRange(start, end);
 };
 
-// Check if the habit was achieved for a specific date
-const isHabitCompleted = (date: string): boolean => {
-  const record = habitsForWeek.value.find((r) => r.date === date);
-  return record?.achievedGoals.includes(props.habit) || false;
-};
+const datesAndHabits = computed(()=>{
+  let rtn: Array<{day: string, habitComplete: boolean}> = [];
+  weekDays.value.forEach((weekDay)=>{
+    const record = habitsForWeek.value.find((r) => r.date === weekDay);
+    rtn.push({
+      day: weekDay,
+      habitComplete: record?.achievedGoals.includes(props.habit) || false
+    });
+  });
+  return rtn;
+});
+
 
 // Load data when component is mounted
 onMounted(() => {
   loadWeekDays();
   loadWeekHabits();
+  props.habitDB.addOnDbChange(()=>{
+    loadWeekHabits();
+  });
 });
+
+const boxClicked = (day: string)=>{
+  emit('day-clicked', day);
+};
+
 </script>
 
 <template>
   <div class="flex gap-2">
-    <div v-for="day in weekDays" :key="day" class="text-center">
+    <div v-for="day in datesAndHabits" :key="JSON.stringify(day)" class="text-center">
       <!-- <div class="text-xs text-gray-600">{{ day }}</div> -->
       <Box
-        :color="isHabitCompleted(day) ? props.color : 'bg-gray-500'"
+        :color="day.habitComplete ? props.color : 'bg-gray-500'"
+        @clicked="boxClicked(day.day)"
       />
     </div>
   </div>

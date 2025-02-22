@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import Box from './components/Box.vue';
 import Week from './components/Week.vue';
+import HabitModal from './components/HabitModal.vue';
 import { HabitDBBrowserStorage } from './HabitDBBrowserStorage';
 
 const handleBoxClick = ()=>{
@@ -9,6 +10,15 @@ const handleBoxClick = ()=>{
 };
 
 const habitStorage = ref<HabitDBBrowserStorage>(new HabitDBBrowserStorage());
+const selectedDay = ref<string | null>(null);
+
+const onDayClicked = (day: string)=>{
+  selectedDay.value = day;
+}
+
+const onCloseModal = ()=>{
+  selectedDay.value = null;
+}
 
 </script>
 
@@ -20,7 +30,8 @@ const habitStorage = ref<HabitDBBrowserStorage>(new HabitDBBrowserStorage());
   <Week
     :habitDB=habitStorage
     color="bg-blue-500" 
-    habit="eating"
+    habit="stuff"
+    @day-clicked="onDayClicked"
   />
   <br>
   <Week
@@ -45,6 +56,13 @@ const habitStorage = ref<HabitDBBrowserStorage>(new HabitDBBrowserStorage());
     :habitDB=habitStorage
     color="bg-blue-500" 
     habit="eating"
+  />
+
+  <HabitModal
+    v-if="selectedDay" 
+    :day="selectedDay"
+    :habitDB="habitStorage"
+    @close="onCloseModal"
   />
 </template>
 

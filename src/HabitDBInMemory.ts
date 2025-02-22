@@ -3,14 +3,24 @@ import type { HabitDB, HabitRecord } from "./HabitDB";
 
 export class HabitDBInMemory implements HabitDB {
   private records: Map<string, HabitRecord>;
+  private onChangeHandlers: Array<Function> = [];
 
   constructor() {
     this.records = new Map();
   }
 
+  private runOnChangeHandlers(){
+    this.onChangeHandlers.forEach((func)=>{func();});
+  }
+
+  addOnDbChange(func: Function): void {
+    this.onChangeHandlers.push(func);
+  }
+
   // Add or update a habit record
   async addRecord(record: HabitRecord): Promise<void> {
     this.records.set(record.date, record);
+    this.runOnChangeHandlers();
   }
 
   // Retrieve a record for a specific date
