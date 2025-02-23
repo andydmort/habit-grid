@@ -8,9 +8,9 @@ import Box from './Box.vue';
 
 const props = withDefaults(defineProps<{
     currentGoal: string; // goal to query for the passed date.
-    color: string; // Color to show if goal is completed. This should be a tailwind background color.
-    unfullfilledColor: string; // Color to show if goal is not completed. This should be a tailwind background color.
-    futureColor: string; // Color to show if the date is in the future. This should be a tailwind background color.
+    color?: string; // Color to show if goal is completed. This should be a tailwind background color.
+    unfullfilledColor?: string; // Color to show if goal is not completed. This should be a tailwind background color.
+    futureColor?: string; // Color to show if the date is in the future. This should be a tailwind background color.
     date: string; // date in YYYY-MM-DD format for this box.
     habitDB: HabitDB; // Database to query for the goals.
 }>(), {
