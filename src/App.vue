@@ -6,7 +6,9 @@ import { HabitDBBrowserStorage } from './HabitDBBrowserStorage';
 import GoalSelector from "./components/GoalSelector.vue";
 import EditGoalsModal from "./components/EditGoalsModal.vue";
 
+// Load the habit storage that will be passed and shared by all components.
 const habitStorage = ref<HabitDBBrowserStorage>(new HabitDBBrowserStorage());
+
 const selectedDay = ref<string | null>(null);
 const selectedGoal = ref<string | null>("");
 
@@ -18,6 +20,7 @@ const onCloseModal = ()=>{
   selectedDay.value = null;
 }
 
+
 const showCreateGoalModal = ref(false);
 const goals = ref<string[]>([]);
 
@@ -26,13 +29,7 @@ const loadGoals = async () => {
 };
 
 const handleGoalSelect = (goal: string) => {
-  if (goal === "add-new") {
-    showCreateGoalModal.value = true;
-    return;
-  } else {
-    selectedGoal.value = goal;
-    console.log(`Selected goal: ${goal}`);
-  }
+  selectedGoal.value = goal;
 };
 
 const handleGoalCreated = async (goal: string) => {
@@ -46,20 +43,28 @@ const handleGoalRemoved = async (goal: string) => {
   loadGoals();
 };
 
-onMounted(() => {
-  loadGoals();
-  selectedGoal.value = goals.value ? goals.value[0] : null;
-});
 
 // Get first day of current month
 const startDate = new Date();
-startDate.setDate(1);
 const startDateStr = startDate.toISOString().split('T')[0];
+
+
+onMounted(async () => {
+  await loadGoals();
+  selectedGoal.value = goals.value ? goals.value[0] : null;
+});
 
 </script>
 
 <template>
-  <div class="p-4">
+  <div class="flex flex-col items-center p-4">
+    <button 
+      class="mt-4 px-4 py-2 bg-gray-500 text-white rounded self-end"
+      @click="showCreateGoalModal = true"
+    >
+    Edit Goals
+    </button>
+
     <GoalSelector 
       class="py-4"
       :goals="goals" 
@@ -68,7 +73,7 @@ const startDateStr = startDate.toISOString().split('T')[0];
     
     <WeeksOfDateBoxes
       :start-date="startDateStr"
-      :num-weeks="5"
+      :num-weeks="10"
       :habitDB="habitStorage"
       color="bg-blue-500"
       unfullfilled-color="bg-gray-500"
@@ -76,9 +81,7 @@ const startDateStr = startDate.toISOString().split('T')[0];
       @day-clicked="onDayClicked"
     />
 
-    <button @click="showCreateGoalModal = true" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded">
-      Settings
-    </button>
+    
 
     <HabitModal
       v-if="selectedDay" 

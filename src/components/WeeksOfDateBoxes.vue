@@ -25,11 +25,11 @@ const weeks = computed<string[][]>(()=>{
     const weeks = [];
     const startDate = new Date(props.startDate);
     startDate.setDate(startDate.getDate() - startDate.getDay()); // Move to the start of the week
-    for (let i = 0; i < props.numWeeks; i++) {
+    for (let i = props.numWeeks - 1; i >= 0; i--) {
         const week = [];
         for (let j = 0; j < 7; j++) {
             const date = new Date(startDate);
-            date.setDate(date.getDate() + i * 7 + j);
+            date.setDate(date.getDate() - i * 7 + j);
             week.push(date.toISOString().split('T')[0]);
         }
         weeks.push(week);
