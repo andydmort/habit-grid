@@ -10,37 +10,34 @@ const props = defineProps<{
   color: string; // Tailwind color (e.g., "blue-500")
   habit: string; // The habit to track (e.g., "Exercise")
   habitDB: HabitDB;
-  mondayDate?: Date; // The date for Monday in the week. This represents the start of the week.
+  startDate: Date; // The start date of the range
+  endDate: Date; // The end date of the range
 }>();
 
 const emit = defineEmits<{
   "day-clicked": [value: string]
 }>();
 
-
 const tracker = props.habitDB;
 const weekDays = ref<string[]>([]);
 const habitsForWeek = ref<Array<HabitRecord>>([]);
 
-// Get the start of the current week (Monday)
-const getWeekStartDate = (): Date => {
-  const today = props.mondayDate ?? new Date();
-  return today;
-};
-
-// Generate a week's dates
+// Generate dates for the given range
 const loadWeekDays = () => {
-  const start = getWeekStartDate();
-  weekDays.value = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(start);
-    date.setDate(start.getDate() + i);
-    return date.toISOString().split("T")[0]; // YYYY-MM-DD format
-  });
+  const start = props.startDate;
+  const end = props.endDate;
+  const dates = [];
+  let currentDate = new Date(start);
+  while (currentDate <= end) {
+    dates.push(currentDate.toISOString().split("T")[0]); // YYYY-MM-DD format
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+  weekDays.value = dates;
 };
 
-// Load the habit records for the week
+// Load the habit records for the range
 const loadWeekHabits = async () => {
-  const [start, end] = [weekDays.value[0], weekDays.value[6]];
+  const [start, end] = [weekDays.value[0], weekDays.value[weekDays.value.length - 1]];
   habitsForWeek.value = await tracker.getRecordsByDateRange(start, end);
 };
 
@@ -55,7 +52,6 @@ const datesAndHabits = computed(()=>{
   });
   return rtn;
 });
-
 
 // Load data when component is mounted
 onMounted(() => {

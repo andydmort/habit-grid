@@ -59,54 +59,68 @@ onMounted(() => {
 </script>
 
 <template>
-  <p class="font-bold underline">stuff and stuff</p>
-  <Box
-    @clicked="handleBoxClick" 
-  />
-  <GoalSelector 
-    :goals="goals" 
-    @goalSelected="handleGoalSelect"
-  />
-  <Week
-    :habitDB=habitStorage
-    color="bg-blue-500" 
-    habit="stuff"
-    @day-clicked="onDayClicked"
-  />
-  <br>
-  <Week
-    :habitDB=habitStorage
-    color="bg-blue-500" 
-    habit="eating"
-  />
-  <br>
-  <Week
-    :habitDB=habitStorage
-    color="bg-blue-500" 
-    habit="eating"
-  />
-  <br>
-  <Week
-    :habitDB=habitStorage
-    color="bg-blue-500" 
-    habit="eating"
-  />
-  <br>
-  <Week
-    :habitDB=habitStorage
-    color="bg-blue-500" 
-    habit="eating"
-  />
+  <div class="p-4">
 
+    <GoalSelector 
+      class="py-4"
+      :goals="goals" 
+      @goalSelected="handleGoalSelect"
+    />
+    <Week
+      :habitDB="habitStorage"
+      color="bg-blue-500" 
+      :habit="selectedGoal ?? ''"
+      :startDate="new Date('2023-01-01')"
+      :endDate="new Date('2023-01-07')"
+      @day-clicked="onDayClicked"
+    />
+    <br>
+    <Week
+      :habitDB="habitStorage"
+      color="bg-blue-500" 
+      :habit="selectedGoal ?? ''"
+      :startDate="new Date('2023-01-08')"
+      :endDate="new Date('2023-01-14')"
+      @day-clicked="onDayClicked"
+    />
+    <br>
+    <Week
+      :habitDB="habitStorage"
+      color="bg-blue-500" 
+      :habit="selectedGoal ?? ''"
+      :startDate="new Date('2023-01-15')"
+      :endDate="new Date('2023-01-21')"
+      @day-clicked="onDayClicked"
+    />
+    <br>
+    <Week
+      :habitDB="habitStorage"
+      :habit="selectedGoal ?? ''"
+      color="bg-blue-500" 
+      :startDate="new Date('2023-01-22')"
+      :endDate="new Date('2023-01-28')"
+      @day-clicked="onDayClicked"
+    />
+    <br>
+    <Week
+      :habitDB="habitStorage"
+      :habit="selectedGoal ?? ''"
+      color="bg-blue-500" 
+      :startDate="new Date('2023-01-29')"
+      :endDate="new Date('2023-02-04')"
+      @day-clicked="onDayClicked"
+    />
+    
+  </div>
+  <button @click="showCreateGoalModal = true" class="px-4 py-2 bg-gray-500 text-white rounded">
+    Settings
+  </button>
   <HabitModal
     v-if="selectedDay" 
     :day="selectedDay"
     :habitDB="habitStorage"
     @close="onCloseModal"
   />
-  <button @click="showCreateGoalModal = true" class="px-4 py-2 bg-gray-500 text-white rounded">
-    Settings
-  </button>
   <EditGoalsModal
     v-if="showCreateGoalModal"
     :goals="goals"
