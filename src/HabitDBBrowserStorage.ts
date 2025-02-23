@@ -12,6 +12,11 @@ export class HabitDBBrowserStorage implements HabitDB {
       localStorage.setItem(this.storageKey, JSON.stringify([]));
     }
   }
+  removeOnDbChange(func: Function): void {
+    this.onChangeHandlers = this.onChangeHandlers.filter((f) =>{
+      return f !== func;
+    });
+  }
 
   private runOnChangeHandlers(){
     this.onChangeHandlers.forEach((func)=>{func();});

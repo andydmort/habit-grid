@@ -24,6 +24,11 @@ const addHabit = () => {
   newHabit.value = "";
 };
 
+// Remove a habit from the list
+const removeHabit = (index: number) => {
+  habits.value.splice(index, 1);
+};
+
 // Save habits and close the modal
 const saveAndClose = async () => {
   await props.habitDB.addRecord({ date: props.day, achievedGoals: habits.value });
@@ -38,8 +43,13 @@ const saveAndClose = async () => {
 
       <div class="space-y-2">
         <ul>
-          <li v-for="(habit, index) in habits" :key="index" class="p-2 border rounded bg-gray-200">
-            {{ habit }}
+          <li v-for="(habit, index) in habits" :key="index" 
+              class="p-2 border rounded bg-gray-200 flex justify-between items-center">
+            <span>{{ habit }}</span>
+            <button @click="removeHabit(index)" 
+                    class="text-red-500 hover:text-red-700 px-2">
+              ✕
+            </button>
           </li>
         </ul>
         

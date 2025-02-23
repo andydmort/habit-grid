@@ -14,6 +14,12 @@ export class HabitDBInMemory implements HabitDB {
     this.goals = new Set();
   }
 
+  removeOnDbChange(func: Function): void {
+    this.onChangeHandlers = this.onChangeHandlers.filter((f) =>{
+      return f !== func;
+    });
+  }
+
   private runOnChangeHandlers(){
     this.onChangeHandlers.forEach((func)=>{func();});
   }
