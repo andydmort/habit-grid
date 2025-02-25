@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, defineEmits, defineProps, watch } from "vue";
+import ColorSelectorModal from "./ColorSelectorModal.vue";
+import Box from "./Box.vue";
 
 const emit = defineEmits<{
   (event: "close"): void;
@@ -36,6 +38,13 @@ const removeGoal = (goal: string) => {
 const closeModal = () => {
   emit("close");
 };
+
+// Handling the color modal
+let colorModalOpen = ref(false);
+
+
+
+
 </script>
 
 <template>
@@ -62,6 +71,10 @@ const closeModal = () => {
       <ul class="mt-4">
         <li v-for="goal in goals" :key="goal" class="flex justify-between items-center p-2 border-b">
           {{ goal }}
+          <Box 
+            color="bg-red-500" 
+            @clicked="colorModalOpen = true"
+          />
           <button @click="removeGoal(goal)" class="px-2 py-1 bg-red-500 text-white rounded">
             Remove
           </button>
@@ -69,4 +82,5 @@ const closeModal = () => {
       </ul>
     </div>
   </div>
+  <ColorSelectorModal v-if="colorModalOpen" @close="colorModalOpen = false" />
 </template>
