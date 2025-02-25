@@ -1,4 +1,4 @@
-import type { HabitDB, HabitRecord } from "./HabitDB";
+import type { GoalRecord, HabitDB, HabitRecord } from "./HabitDB";
 
 export class HabitDBBrowserStorage implements HabitDB {
   private storageKey = "habit-tracker-data";
@@ -12,6 +12,9 @@ export class HabitDBBrowserStorage implements HabitDB {
       localStorage.setItem(this.storageKey, JSON.stringify([]));
     }
   }
+
+  
+
   removeOnDbChange(func: Function): void {
     this.onChangeHandlers = this.onChangeHandlers.filter((f) =>{
       return f !== func;
@@ -83,23 +86,26 @@ export class HabitDBBrowserStorage implements HabitDB {
     localStorage.removeItem(this.storageKey);
   }
 
-  async addGoal(goalName: string): Promise<void> {
+  async addOrEditGoal(goal: GoalRecord): Promise<void> {
     let goals = JSON.parse(localStorage.getItem(this.goalsKey) || "[]");
-    if (!goals.includes(goalName)) {
-      goals.push(goalName);
-      localStorage.setItem(this.goalsKey, JSON.stringify(goals));
-      this.runOnChangeHandlers();
+    const goalIdx = goals.findIndex((g: string) => g === goal.title);
+    if(goalIdx !== -1){
+      goals[goalIdx] = goal.title;
+    } else {
+      goals.push(goal.title);
     }
-  }
-
-  async removeGoal(goalName: string): Promise<void> {
-    let goals = JSON.parse(localStorage.getItem(this.goalsKey) || "[]");
-    goals = goals.filter((goal: string) => goal !== goalName);
     localStorage.setItem(this.goalsKey, JSON.stringify(goals));
     this.runOnChangeHandlers();
   }
 
-  async getGoals(): Promise<string[]> {
+  async removeGoal(goalTitle: string): Promise<void> {
+    let goals = JSON.parse(localStorage.getItem(this.goalsKey) || "[]");
+    goals = goals.filter((goal: GoalRecord) => goal.title !== goalTitle);
+    localStorage.setItem(this.goalsKey, JSON.stringify(goals));
+    this.runOnChangeHandlers();
+  }
+
+  async getGoals(): Promise<GoalRecord[]> {
     return JSON.parse(localStorage.getItem(this.goalsKey) || "[]");
   }
   

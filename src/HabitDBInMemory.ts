@@ -1,18 +1,19 @@
 /**
  * HabitDBInMemory.ts
  */
-import type { HabitDB, HabitRecord } from "./HabitDB";
+import type { GoalRecord, HabitDB, HabitRecord } from "./HabitDB";
 
 
 export class HabitDBInMemory implements HabitDB {
   private records: Map<string, HabitRecord>;
-  private goals: Set<string>;
+  private goals: Map<string, GoalRecord>;
   private onChangeHandlers: Array<Function> = [];
 
   constructor() {
     this.records = new Map();
-    this.goals = new Set();
+    this.goals = new Map();
   }
+  
 
   removeOnDbChange(func: Function): void {
     this.onChangeHandlers = this.onChangeHandlers.filter((f) =>{
@@ -50,11 +51,10 @@ export class HabitDBInMemory implements HabitDB {
     });
   }
 
-  async addGoal(goalName: string): Promise<void> {
-    if (!this.goals.has(goalName)) {
-      this.goals.add(goalName);
-      this.runOnChangeHandlers();
-    }
+  async addOrEditGoal(goal: GoalRecord): Promise<void> {
+    // Check if goal is in the set
+    this.goals.set(goal.title, goal); 
+    this.runOnChangeHandlers();
   }
 
   async removeGoal(goalName: string): Promise<void> {
@@ -64,7 +64,7 @@ export class HabitDBInMemory implements HabitDB {
     }
   }
 
-  async getGoals(): Promise<string[]> {
-    return Array.from(this.goals);
+  async getGoals(): Promise<GoalRecord[]> {
+    return Array.from(this.goals.values());
   }
 }
