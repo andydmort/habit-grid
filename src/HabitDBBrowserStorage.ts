@@ -88,11 +88,11 @@ export class HabitDBBrowserStorage implements HabitDB {
 
   async addOrEditGoal(goal: GoalRecord): Promise<void> {
     let goals = JSON.parse(localStorage.getItem(this.goalsKey) || "[]");
-    const goalIdx = goals.findIndex((g: string) => g === goal.title);
+    const goalIdx = goals.findIndex((g: GoalRecord) => g.title === goal.title);
     if(goalIdx !== -1){
-      goals[goalIdx] = goal.title;
+      goals[goalIdx] = goal;
     } else {
-      goals.push(goal.title);
+      goals.push(goal);
     }
     localStorage.setItem(this.goalsKey, JSON.stringify(goals));
     this.runOnChangeHandlers();

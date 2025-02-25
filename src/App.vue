@@ -24,24 +24,24 @@ const onCloseModal = ()=>{
 const showCreateGoalModal = ref(false);
 const goals = ref<string[]>([]);
 
-const loadGoals = async () => {
-  goals.value = await habitStorage.value.getGoals();
-};
+// const loadGoals = async () => {
+//   goals.value = await habitStorage.value.getGoals();
+// };
 
 const handleGoalSelect = (goal: string) => {
   selectedGoal.value = goal;
 };
 
-const handleGoalCreated = async (goal: string) => {
-  await habitStorage.value.addGoal(goal);
-  loadGoals();
-  showCreateGoalModal.value = false;
-};
+// const handleGoalCreated = async (goal: string) => {
+//   await habitStorage.value.addGoal(goal);
+//   loadGoals();
+//   showCreateGoalModal.value = false;
+// };
 
-const handleGoalRemoved = async (goal: string) => {
-  await habitStorage.value.removeGoal(goal);
-  loadGoals();
-};
+// const handleGoalRemoved = async (goal: string) => {
+//   await habitStorage.value.removeGoal(goal);
+//   loadGoals();
+// };
 
 
 // Get first day of current month
@@ -50,7 +50,7 @@ const startDateStr = startDate.toISOString().split('T')[0];
 
 
 onMounted(async () => {
-  await loadGoals();
+  // await loadGoals();
   selectedGoal.value = goals.value ? goals.value[0] : null;
 });
 
@@ -92,10 +92,8 @@ onMounted(async () => {
     
     <EditGoalsModal
       v-if="showCreateGoalModal"
-      :goals="goals"
+      :habit-d-b="habitStorage"
       @close="showCreateGoalModal = false"
-      @goalCreated="handleGoalCreated"
-      @goalRemoved="handleGoalRemoved"
     />
   </div>
 </template>

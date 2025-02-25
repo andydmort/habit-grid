@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, defineEmits, defineProps, watch } from "vue";
-import ColorSelectorModal from "./ColorSelectorModal.vue";
-import Box from "./Box.vue";
+import { ref, defineEmits, defineProps, watch, onMounted } from "vue";
+import type { GoalRecord, HabitDB } from "../HabitDB";
+import GoalEditor from "./GoalEditor.vue";
 
 const emit = defineEmits<{
   (event: "close"): void;
@@ -10,45 +10,70 @@ const emit = defineEmits<{
 }>();
 
 const props = defineProps<{
-  goals: string[];
+  habitDB: HabitDB
 }>();
 
-const newGoal = ref("");
-const goals = ref<string[]>([]);
 
-watch(() => props.goals, (newGoals) => {
-  goals.value = [...newGoals];
-}, { immediate: true });
 
 // Handle submitting the new goal
+const newGoal = ref("");
 const submitGoal = () => {
   if (newGoal.value.trim() === "") return;
-  goals.value.push(newGoal.value.trim());
-  emit("goalCreated", newGoal.value.trim());
-  newGoal.value = "";
+  props.habitDB.addOrEditGoal({ 
+    title: newGoal.value.trim(), 
+    color: "bg-blue-500", 
+    description: "" 
+  });
 };
 
 // Handle removing a goal
-const removeGoal = (goal: string) => {
-  goals.value = goals.value.filter(g => g !== goal);
-  emit("goalRemoved", goal);
+const removeGoal = (goal: GoalRecord) => {
+  props.habitDB.removeGoal(goal.title);
 };
 
-// Close modal
+// Handle Close modal
 const closeModal = () => {
   emit("close");
 };
 
-// Handling the color modal
-let colorModalOpen = ref(false);
+// Editing Goals
+const goalToEdit = ref<GoalRecord>();
+const goalEditorOpen = ref(false);
+const openGoalEditor = (goal: GoalRecord) => {
+  goalToEdit.value = goal;
+  goalEditorOpen.value = true;
+};
+const closeGoalEditor = () => {
+  goalEditorOpen.value = false;
+};
 
+// Handle updating a goal
+const updateGoal = (updatedGoal: GoalRecord) => {
+  props.habitDB.addOrEditGoal(updatedGoal);
+  closeGoalEditor();
+};
 
+const goals = ref<GoalRecord[]>([]);
+onMounted(async () => {
+  let fetchedGoals = await props.habitDB.getGoals()
+  goals.value = fetchedGoals;
+  props.habitDB.addOnDbChange(async ()=>{
+    let fetchedGoals = await props.habitDB.getGoals()
+    goals.value = fetchedGoals;
+  });
+});
 
 
 </script>
 
 <template>
-  <div class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+  <GoalEditor 
+    v-if="goalEditorOpen"
+    :goal="goalToEdit!" 
+    @update="updateGoal"
+    @close="closeGoalEditor"
+  />
+  <div class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-40">
     <div class="bg-white p-6 rounded-lg shadow-lg w-96">
       <h2 class="text-xl font-semibold mb-4">Edit Goals</h2>
 
@@ -69,18 +94,22 @@ let colorModalOpen = ref(false);
       </div>
 
       <ul class="mt-4">
-        <li v-for="goal in goals" :key="goal" class="flex justify-between items-center p-2 border-b">
-          {{ goal }}
-          <Box 
-            color="bg-red-500" 
-            @clicked="colorModalOpen = true"
-          />
-          <button @click="removeGoal(goal)" class="px-2 py-1 bg-red-500 text-white rounded">
-            Remove
-          </button>
+        <li v-for="goal in goals" :key="goal.title" class="flex justify-between items-center p-2 border-b">
+          {{ goal.title }}
+          <div class="flex gap-2">
+            <button
+              class="px-2 py-1 bg-green-500 text-white rounded" 
+              @click="openGoalEditor(goal)"
+            > 
+              Edit 
+            </button>
+            <button @click="removeGoal(goal)" class="px-2 py-1 bg-red-500 text-white rounded">
+              Remove
+            </button>
+          </div>
         </li>
       </ul>
     </div>
   </div>
-  <ColorSelectorModal v-if="colorModalOpen" @close="colorModalOpen = false" />
+  
 </template>
