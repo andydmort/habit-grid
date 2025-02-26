@@ -18,7 +18,7 @@ const editedGoal = ref({ ...props.goal });
 
 const updateColor = (newColor: string) => {
   editedGoal.value.color = newColor;
-  emit('update', editedGoal.value);
+  // emit('update', editedGoal.value);
 };
 
 const updateGoal = () => {
