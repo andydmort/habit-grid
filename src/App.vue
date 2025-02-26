@@ -5,12 +5,13 @@ import HabitModal from './components/HabitModal.vue';
 import { HabitDBBrowserStorage } from './HabitDBBrowserStorage';
 import GoalSelector from "./components/GoalSelector.vue";
 import EditGoalsModal from "./components/EditGoalsModal.vue";
+import type { GoalRecord } from './HabitDB';
 
 // Load the habit storage that will be passed and shared by all components.
 const habitStorage = ref<HabitDBBrowserStorage>(new HabitDBBrowserStorage());
 
 const selectedDay = ref<string | null>(null);
-const selectedGoal = ref<string | null>("");
+const selectedGoal = ref<GoalRecord>({title: '', color: '', description: ''});
 
 const onDayClicked = (day: string)=>{
   selectedDay.value = day;
@@ -22,18 +23,19 @@ const onCloseModal = ()=>{
 
 
 const showCreateGoalModal = ref(false);
-const goals = ref<string[]>([]);
+const goals = ref<GoalRecord[]>([]);
 
-// const loadGoals = async () => {
-//   goals.value = await habitStorage.value.getGoals();
-// };
+const loadGoals = async () => {
+  goals.value = await habitStorage.value.getGoals();
+};
 
-const handleGoalSelect = (goal: string) => {
-  selectedGoal.value = goal;
+const handleGoalSelect = (goalTitle: string) => {
+  // Find the goal record based on the title
+  let goal = goals.value.find(g=>g.title === goalTitle);
+  selectedGoal.value = goal ?? {title: '', color: '', description: ''};
 };
 
 // const handleGoalCreated = async (goal: string) => {
-//   await habitStorage.value.addGoal(goal);
 //   loadGoals();
 //   showCreateGoalModal.value = false;
 // };
@@ -43,6 +45,11 @@ const handleGoalSelect = (goal: string) => {
 //   loadGoals();
 // };
 
+const onGoalsEdited = async () => {
+  await loadGoals();
+  selectedGoal.value = goals.value ? goals.value[0] : {title: '', color: '', description: ''};
+  showCreateGoalModal.value = false;
+};
 
 // Get first day of current month
 const startDate = new Date();
@@ -50,8 +57,7 @@ const startDateStr = startDate.toISOString().split('T')[0];
 
 
 onMounted(async () => {
-  // await loadGoals();
-  selectedGoal.value = goals.value ? goals.value[0] : null;
+  onGoalsEdited();
 });
 
 </script>
@@ -67,7 +73,7 @@ onMounted(async () => {
 
     <GoalSelector 
       class="py-4"
-      :goals="goals" 
+      :goals="goals.map(g=>g.title)" 
       @goalSelected="handleGoalSelect"
     />
     
@@ -75,13 +81,11 @@ onMounted(async () => {
       :start-date="startDateStr"
       :num-weeks="10"
       :habitDB="habitStorage"
-      color="bg-blue-500"
+      :color="selectedGoal.color"
       unfullfilled-color="bg-gray-500"
-      :selected-goal="selectedGoal ?? ''"
+      :selected-goal="selectedGoal.title"
       @day-clicked="onDayClicked"
     />
-
-    
 
     <HabitModal
       v-if="selectedDay" 
@@ -93,7 +97,7 @@ onMounted(async () => {
     <EditGoalsModal
       v-if="showCreateGoalModal"
       :habit-d-b="habitStorage"
-      @close="showCreateGoalModal = false"
+      @close="onGoalsEdited"
     />
   </div>
 </template>
