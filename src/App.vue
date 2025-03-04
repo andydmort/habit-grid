@@ -11,7 +11,7 @@ import type { GoalRecord } from './HabitDB';
 const habitStorage = ref<HabitDBBrowserStorage>(new HabitDBBrowserStorage());
 
 const selectedDay = ref<string | null>(null);
-const selectedGoal = ref<GoalRecord>({title: '', color: '', description: ''});
+const selectedGoal = ref<GoalRecord>({title: '', color: 'bg-blue-500', description: ''});
 
 const onDayClicked = (day: string)=>{
   selectedDay.value = day;
@@ -32,7 +32,7 @@ const loadGoals = async () => {
 const handleGoalSelect = (goalTitle: string) => {
   // Find the goal record based on the title
   let goal = goals.value.find(g=>g.title === goalTitle);
-  selectedGoal.value = goal ?? {title: '', color: '', description: ''};
+  selectedGoal.value = goal ?? {title: '', color: 'bg-blue-500', description: ''};
 };
 
 // const handleGoalCreated = async (goal: string) => {
@@ -47,7 +47,7 @@ const handleGoalSelect = (goalTitle: string) => {
 
 const onGoalsEdited = async () => {
   await loadGoals();
-  selectedGoal.value = goals.value ? goals.value[0] : {title: '', color: '', description: ''};
+  selectedGoal.value = goals.value ? goals.value[0] : {title: '', color: 'bg-blue-500', description: ''};
   showCreateGoalModal.value = false;
 };
 
@@ -81,9 +81,9 @@ onMounted(async () => {
       :start-date="startDateStr"
       :num-weeks="10"
       :habitDB="habitStorage"
-      :color="selectedGoal.color"
+      :color="selectedGoal?.color"
       unfullfilled-color="bg-gray-500"
-      :selected-goal="selectedGoal.title"
+      :selected-goal="selectedGoal?.title"
       @day-clicked="onDayClicked"
     />
 

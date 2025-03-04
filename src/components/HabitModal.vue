@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, defineEmits } from "vue";
-import type { HabitDB, HabitRecord } from "../HabitDB.ts";
+import type { HabitDB } from "../HabitDB.ts";
 
 const props = defineProps<{
   day: string; // Selected day in YYYY-MM-DD format

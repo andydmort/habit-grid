@@ -55,7 +55,7 @@ onUnmounted(()=>{
 
 <template>
     <Box 
-        :color="afterToday ? futureColor : (shouldBeColored ? color : unfullfilledColor)" 
+        :color="afterToday ? futureColor : (shouldBeColored ? props.color : unfullfilledColor)" 
         @clicked="emit('clicked', props.date)" 
     />
 </template>

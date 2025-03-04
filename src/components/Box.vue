@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   color?: string;
 }>(), {color: "bg-blue-500"});
 
@@ -14,7 +14,7 @@ const handleClick = () => {
 <template>
   <div
     class="w-7 h-7 justify-center cursor-pointer rounded-sm "
-    :class="color"
+    :class="props.color"
     @click="handleClick"
   >
   </div>

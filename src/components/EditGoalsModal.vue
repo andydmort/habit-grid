@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits, defineProps, watch, onMounted } from "vue";
+import { ref, defineEmits, defineProps, onMounted } from "vue";
 import type { GoalRecord, HabitDB } from "../HabitDB";
 import GoalEditor from "./GoalEditor.vue";
 

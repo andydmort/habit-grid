@@ -7,14 +7,14 @@ import type { HabitDB } from '../HabitDB';
 import DateBox from './DateBox.vue';
 
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
     startDate: string; // Start date in YYYY-MM-DD format. Note: We will always use the entire week that includes the start date.
     numWeeks: number; // Number of weeks to display.
     habitDB: HabitDB; // Database to query for the goals
     color?: string; // Color to show if goal is completed. This should be a tailwind background color.
     unfullfilledColor?: string; // (Optional) Color to show if goal is not completed. This should be a tailwind background color.
     selectedGoal: string; // Goal to query for the passed date.
-}>();
+}>(), {color: "bg-blue-500", unfullfilledColor: "bg-gray-200"});
 
 const emit = defineEmits<{
     "day-clicked": [value: string]  // emits the date when a box is clicked.
