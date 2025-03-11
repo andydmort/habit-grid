@@ -27,10 +27,8 @@ const currentGoalsForDate = ref<string[]>([]);
 
 let afterToday = computed<boolean>(() => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time to 00:00:00
-    const dateToCompare = new Date(props.date);
-    dateToCompare.setHours(0, 0, 0, 0); // Reset time to 00:00:00
-    return dateToCompare > today;
+    const todayStr = today.toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    return props.date > todayStr; // Simple string comparison of YYYY-MM-DD format
 });
 
 let shouldBeColored = computed<boolean>(()=>{

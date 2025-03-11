@@ -55,6 +55,11 @@ const onGoalsEdited = async () => {
 const startDate = new Date();
 const startDateStr = startDate.toISOString().split('T')[0];
 
+// Function to handle quick check-off for today
+const quickCheckToday = async () => {
+  const today = new Date().toISOString().split('T')[0];
+  selectedDay.value = today;
+};
 
 onMounted(async () => {
   onGoalsEdited();
@@ -86,6 +91,14 @@ onMounted(async () => {
       :selected-goal="selectedGoal?.title"
       @day-clicked="onDayClicked"
     />
+
+    <!-- Quick check-off button -->
+    <button 
+      class="mt-6 px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors shadow-md"
+      @click="quickCheckToday"
+    >
+      I did it!
+    </button>
 
     <HabitModal
       v-if="selectedDay" 
