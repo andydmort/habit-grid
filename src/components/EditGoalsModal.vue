@@ -14,23 +14,53 @@ const props = defineProps<{
   habitDB: HabitDB
 }>();
 
-// Handle submitting the new goal
+// Track changes in the current session
+const sessionGoals = ref<GoalRecord[]>([]);
 const newGoal = ref("");
+
+// Load initial goals
+onMounted(async () => {
+  const fetchedGoals = await props.habitDB.getGoals();
+  sessionGoals.value = JSON.parse(JSON.stringify(fetchedGoals)); // Deep copy to avoid reference issues
+});
+
+// Handle submitting the new goal
 const submitGoal = () => {
   if (newGoal.value.trim() === "") return;
-  props.habitDB.addOrEditGoal({ 
+  sessionGoals.value.push({ 
     title: newGoal.value.trim(), 
     color: "bg-blue-500", 
     description: "" 
   });
+  newGoal.value = "";
 };
 
-// Handle removing a goal
+// Handle removing a goal in the session
 const removeGoal = (goal: GoalRecord) => {
-  props.habitDB.removeGoal(goal.title);
+  sessionGoals.value = sessionGoals.value.filter(g => g.title !== goal.title);
 };
 
-// Handle Close modal
+// Save all changes and close modal
+const saveChanges = async () => {
+  // Get current goals to compare
+  const currentGoals = await props.habitDB.getGoals();
+  
+  // Remove goals that are no longer in session
+  for (const goal of currentGoals) {
+    if (!sessionGoals.value.find(g => g.title === goal.title)) {
+      await props.habitDB.removeGoal(goal.title);
+    }
+  }
+  
+  // Add or update goals from session
+  for (const goal of sessionGoals.value) {
+    await props.habitDB.addOrEditGoal(goal);
+  }
+  
+  emit("close");
+};
+
+// Handle Close modal - discard changes
 const closeModal = () => {
   emit("close");
 };
@@ -39,28 +69,21 @@ const closeModal = () => {
 const goalToEdit = ref<GoalRecord>();
 const goalEditorOpen = ref(false);
 const openGoalEditor = (goal: GoalRecord) => {
-  goalToEdit.value = goal;
+  goalToEdit.value = { ...goal }; // Create copy to avoid reference issues
   goalEditorOpen.value = true;
 };
 const closeGoalEditor = () => {
   goalEditorOpen.value = false;
 };
 
-// Handle updating a goal
+// Handle updating a goal in the session
 const updateGoal = (updatedGoal: GoalRecord) => {
-  props.habitDB.addOrEditGoal(updatedGoal);
+  const index = sessionGoals.value.findIndex(g => g.title === goalToEdit.value?.title);
+  if (index !== -1) {
+    sessionGoals.value[index] = updatedGoal;
+  }
   closeGoalEditor();
 };
-
-const goals = ref<GoalRecord[]>([]);
-onMounted(async () => {
-  let fetchedGoals = await props.habitDB.getGoals()
-  goals.value = fetchedGoals;
-  props.habitDB.addOnDbChange(async ()=>{
-    let fetchedGoals = await props.habitDB.getGoals()
-    goals.value = fetchedGoals;
-  });
-});
 </script>
 
 <template>
@@ -85,7 +108,7 @@ onMounted(async () => {
     </div>
 
     <ul class="mt-4">
-      <li v-for="goal in goals" :key="goal.title" class="flex justify-between items-center p-2 border-b">
+      <li v-for="goal in sessionGoals" :key="goal.title" class="flex justify-between items-center p-2 border-b">
         {{ goal.title }}
         <div class="flex gap-2">
           <button
@@ -100,5 +123,11 @@ onMounted(async () => {
         </div>
       </li>
     </ul>
+
+    <template #primary-action>
+      <button @click="saveChanges" class="px-4 py-2 bg-green-500 text-white rounded">
+        Save Changes
+      </button>
+    </template>
   </BaseModal>
 </template>
