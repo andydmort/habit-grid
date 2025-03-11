@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, defineEmits } from "vue";
 import type { HabitDB } from "../HabitDB.ts";
+import BaseModal from "./BaseModal.vue";
 
 const props = defineProps<{
   day: string; // Selected day in YYYY-MM-DD format
@@ -37,40 +38,33 @@ const saveAndClose = async () => {
 </script>
 
 <template>
-  <div class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-      <h2 class="text-xl font-semibold mb-4">Edit Habits for {{ day }}</h2>
-
-      <div class="space-y-2">
-        <ul>
-          <li v-for="(habit, index) in habits" :key="index" 
-              class="p-2 border rounded bg-gray-200 flex justify-between items-center">
-            <span>{{ habit }}</span>
-            <button @click="removeHabit(index)" 
-                    class="text-red-500 hover:text-red-700 px-2">
-              ✕
-            </button>
-          </li>
-        </ul>
-        
-        <input
-          v-model="newHabit"
-          placeholder="Add a new habit"
-          class="w-full p-2 border rounded"
-        />
-        <button @click="addHabit" class="w-full bg-blue-500 text-white py-2 rounded mt-2">
-          Add Habit
-        </button>
-      </div>
-
-      <div class="flex justify-end space-x-2 mt-4">
-        <button @click="emit('close')" class="px-4 py-2 border rounded">
-          Cancel
-        </button>
-        <button @click="saveAndClose" class="px-4 py-2 bg-green-500 text-white rounded">
-          Save
-        </button>
-      </div>
+  <BaseModal :title="`Edit Habits for ${day}`" @close="emit('close')">
+    <div class="space-y-2">
+      <ul>
+        <li v-for="(habit, index) in habits" :key="index" 
+            class="p-2 border rounded bg-gray-200 flex justify-between items-center">
+          <span>{{ habit }}</span>
+          <button @click="removeHabit(index)" 
+                  class="text-red-500 hover:text-red-700 px-2">
+            ✕
+          </button>
+        </li>
+      </ul>
+      
+      <input
+        v-model="newHabit"
+        placeholder="Add a new habit"
+        class="w-full p-2 border rounded"
+      />
+      <button @click="addHabit" class="w-full bg-blue-500 text-white py-2 rounded mt-2">
+        Add Habit
+      </button>
     </div>
-  </div>
+
+    <template #primary-action>
+      <button @click="saveAndClose" class="px-4 py-2 bg-green-500 text-white rounded">
+        Save
+      </button>
+    </template>
+  </BaseModal>
 </template>

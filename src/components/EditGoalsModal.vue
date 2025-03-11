@@ -2,6 +2,7 @@
 import { ref, defineEmits, defineProps, onMounted } from "vue";
 import type { GoalRecord, HabitDB } from "../HabitDB";
 import GoalEditor from "./GoalEditor.vue";
+import BaseModal from "./BaseModal.vue";
 
 const emit = defineEmits<{
   (event: "close"): void;
@@ -12,8 +13,6 @@ const emit = defineEmits<{
 const props = defineProps<{
   habitDB: HabitDB
 }>();
-
-
 
 // Handle submitting the new goal
 const newGoal = ref("");
@@ -62,8 +61,6 @@ onMounted(async () => {
     goals.value = fetchedGoals;
   });
 });
-
-
 </script>
 
 <template>
@@ -73,43 +70,35 @@ onMounted(async () => {
     @update="updateGoal"
     @close="closeGoalEditor"
   />
-  <div class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-40">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-      <h2 class="text-xl font-semibold mb-4">Edit Goals</h2>
+  <BaseModal title="Edit Goals" @close="closeModal" :zIndex="40">
+    <input
+      v-model="newGoal"
+      type="text"
+      placeholder="Enter goal name"
+      class="w-full p-2 border rounded"
+    />
 
-      <input
-        v-model="newGoal"
-        type="text"
-        placeholder="Enter goal name"
-        class="w-full p-2 border rounded"
-      />
-
-      <div class="flex justify-end space-x-2 mt-4">
-        <button @click="closeModal" class="px-4 py-2 border rounded">
-          Cancel
-        </button>
-        <button @click="submitGoal" class="px-4 py-2 bg-blue-500 text-white rounded">
-          Add Goal
-        </button>
-      </div>
-
-      <ul class="mt-4">
-        <li v-for="goal in goals" :key="goal.title" class="flex justify-between items-center p-2 border-b">
-          {{ goal.title }}
-          <div class="flex gap-2">
-            <button
-              class="px-2 py-1 bg-green-500 text-white rounded" 
-              @click="openGoalEditor(goal)"
-            > 
-              Edit 
-            </button>
-            <button @click="removeGoal(goal)" class="px-2 py-1 bg-red-500 text-white rounded">
-              Remove
-            </button>
-          </div>
-        </li>
-      </ul>
+    <div class="flex justify-end space-x-2 mt-4">
+      <button @click="submitGoal" class="px-4 py-2 bg-blue-500 text-white rounded">
+        Add Goal
+      </button>
     </div>
-  </div>
-  
+
+    <ul class="mt-4">
+      <li v-for="goal in goals" :key="goal.title" class="flex justify-between items-center p-2 border-b">
+        {{ goal.title }}
+        <div class="flex gap-2">
+          <button
+            class="px-2 py-1 bg-green-500 text-white rounded" 
+            @click="openGoalEditor(goal)"
+          > 
+            Edit 
+          </button>
+          <button @click="removeGoal(goal)" class="px-2 py-1 bg-red-500 text-white rounded">
+            Remove
+          </button>
+        </div>
+      </li>
+    </ul>
+  </BaseModal>
 </template>
