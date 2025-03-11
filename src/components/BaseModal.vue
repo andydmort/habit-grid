@@ -20,8 +20,8 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50" :style="{ zIndex: zIndex }">
-    <div :class="['bg-white p-6 rounded-lg shadow-lg', width]">
+  <div class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 p-4" :style="{ zIndex: zIndex }">
+    <div :class="['bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto', width]">
       <h2 class="text-xl font-semibold mb-4">{{ title }}</h2>
       
       <!-- Content slot -->

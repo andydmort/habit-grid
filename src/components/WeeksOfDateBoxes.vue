@@ -40,8 +40,8 @@ const weeks = computed<string[][]>(()=>{
 </script>
 
 <template>
-    <div>
-        <div v-for="(week) in weeks" :key="JSON.stringify(week)" class="flex gap-2 my-2">
+    <div class="flex flex-col items-center w-full max-w-[600px] mx-auto gap-1 sm:gap-2">
+        <div v-for="(week) in weeks" :key="JSON.stringify(week)" class="flex gap-1 sm:gap-2 justify-center">
             <DateBox 
                 v-for="(date) in week" 
                 :key="date" 

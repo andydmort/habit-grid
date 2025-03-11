@@ -68,37 +68,41 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center p-4">
-    <button 
-      class="mt-4 px-4 py-2 bg-gray-500 text-white rounded self-end"
-      @click="showCreateGoalModal = true"
-    >
-    Edit Goals
-    </button>
+  <div class="flex flex-col items-center p-4 max-w-4xl mx-auto my-2 border border-gray-200 rounded-lg shadow-sm min-h-[90vh] w-[95%] sm:w-[90%]">
+    <div class="w-full flex justify-end mb-6">
+      <button 
+        class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors shadow-sm"
+        @click="showCreateGoalModal = true"
+      >
+        Edit Goals
+      </button>
+    </div>
 
-    <GoalSelector 
-      class="py-4"
-      :goals="goals.map(g=>g.title)" 
-      @goalSelected="handleGoalSelect"
-    />
-    
-    <WeeksOfDateBoxes
-      :start-date="startDateStr"
-      :num-weeks="10"
-      :habitDB="habitStorage"
-      :color="selectedGoal?.color"
-      unfullfilled-color="bg-gray-500"
-      :selected-goal="selectedGoal?.title"
-      @day-clicked="onDayClicked"
-    />
+    <div class="flex-1 flex flex-col items-center justify-center gap-4">
+      <GoalSelector 
+        class="py-4"
+        :goals="goals.map(g=>g.title)" 
+        @goalSelected="handleGoalSelect"
+      />
+      
+      <WeeksOfDateBoxes
+        :start-date="startDateStr"
+        :num-weeks="10"
+        :habitDB="habitStorage"
+        :color="selectedGoal?.color"
+        unfullfilled-color="bg-gray-500"
+        :selected-goal="selectedGoal?.title"
+        @day-clicked="onDayClicked"
+      />
 
-    <!-- Quick check-off button -->
-    <button 
-      class="mt-6 px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors shadow-md"
-      @click="quickCheckToday"
-    >
-      I did it!
-    </button>
+      <!-- Quick check-off button -->
+      <button 
+        class="mt-6 px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors shadow-md"
+        @click="quickCheckToday"
+      >
+        I did it!
+      </button>
+    </div>
 
     <HabitModal
       v-if="selectedDay" 
@@ -116,4 +120,5 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+/* Add any additional custom styles here */
 </style>
