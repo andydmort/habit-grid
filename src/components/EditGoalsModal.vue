@@ -66,11 +66,15 @@ const closeModal = () => {
 };
 
 // Editing Goals
-const goalToEdit = ref<GoalRecord>();
+const goalToEdit = ref<GoalRecord>({
+  title: "",
+  color: "bg-blue-500",
+  description: ""
+});
 const goalEditorOpen = ref(false);
 const openGoalEditor = (goal: GoalRecord) => {
   goalToEdit.value = { ...goal }; // Create copy to avoid reference issues
-  goalEditorOpen.value = true;
+    goalEditorOpen.value = true;
 };
 const closeGoalEditor = () => {
   goalEditorOpen.value = false;
@@ -87,12 +91,6 @@ const updateGoal = (updatedGoal: GoalRecord) => {
 </script>
 
 <template>
-  <GoalEditor 
-    v-if="goalEditorOpen"
-    :goal="goalToEdit!" 
-    @update="updateGoal"
-    @close="closeGoalEditor"
-  />
   <BaseModal title="Edit Goals" @close="closeModal" :zIndex="40">
     <input
       v-model="newGoal"
@@ -130,4 +128,12 @@ const updateGoal = (updatedGoal: GoalRecord) => {
       </button>
     </template>
   </BaseModal>
+  
+  <!-- Move the GoalEditor outside and after the BaseModal -->
+  <GoalEditor 
+    v-if="goalEditorOpen"
+    :goal="goalToEdit" 
+    @update="updateGoal"
+    @close="closeGoalEditor"
+  />
 </template>
