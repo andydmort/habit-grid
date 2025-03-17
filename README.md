@@ -1,6 +1,6 @@
 # Habit-Grid
 
-A simple habit tracker that was mostly vibe coded. This is a simple project that was created so that I could experiment with vibe coding. I was unable to find a habit tracker that allowed me to use the Seinfeld "Don't Break the Chain" habit process. 
+A habit tracker inspired by Jerry Seinfeld's "Don't Break the Chain" method. This project emerged from my search for a simple habit tracking tool that implements this effective technique. I built it while experimenting with vibe coding.
 
 
 # Development
