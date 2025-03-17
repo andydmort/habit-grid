@@ -21,3 +21,8 @@ mv dist/* docs/*
 git commit -am "chore: updating the release with main"
 git push
 ```
+
+# TODO
+
+- [ ] Bug fix: Edit button is not working in the Edit Goals Modal
+- [ ] Feat: Add a better favicon
