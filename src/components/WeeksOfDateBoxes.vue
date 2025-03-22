@@ -30,7 +30,7 @@ const weeks = computed<string[][]>(()=>{
         for (let j = 0; j < 7; j++) {
             const date = new Date(startDate);
             date.setDate(date.getDate() - i * 7 + j);
-            week.push(date.toISOString().split('T')[0]);
+            week.push(date.toLocaleDateString('en-CA')); // Format as YYYY-MM-DD in local time
         }
         weeks.push(week);
     }

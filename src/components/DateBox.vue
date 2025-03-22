@@ -26,9 +26,8 @@ const emit = defineEmits<{
 const currentGoalsForDate = ref<string[]>([]);
 
 let afterToday = computed<boolean>(() => {
-    const today = new Date();
-    const todayStr = today.toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-    return props.date > todayStr; // Simple string comparison of YYYY-MM-DD format
+    const today = new Date().toLocaleDateString('en-CA'); // Format as YYYY-MM-DD in local time
+    return props.date > today; // Simple string comparison of YYYY-MM-DD format
 });
 
 let shouldBeColored = computed<boolean>(()=>{

@@ -53,11 +53,11 @@ const onGoalsEdited = async () => {
 
 // Get first day of current month
 const startDate = new Date();
-const startDateStr = startDate.toISOString().split('T')[0];
+const startDateStr = startDate.toLocaleDateString('en-CA');
 
 // Function to handle quick check-off for today
 const quickCheckToday = async () => {
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toLocaleDateString('en-CA');
   selectedDay.value = today;
 };
 
