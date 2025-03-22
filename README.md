@@ -23,6 +23,3 @@ git push
 ```
 
 # TODO
-
-- [ ] Bug fix: Edit button is not working in the Edit Goals Modal
-- [ ] Feat: Add a better favicon
