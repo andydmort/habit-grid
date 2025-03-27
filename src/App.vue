@@ -58,7 +58,21 @@ const startDateStr = startDate.toLocaleDateString('en-CA');
 // Function to handle quick check-off for today
 const quickCheckToday = async () => {
   const today = new Date().toLocaleDateString('en-CA');
-  selectedDay.value = today;
+  // Get current record for today
+  const record = await habitStorage.value.getRecordByDate(today);
+  const currentGoals = record?.achievedGoals || [];
+  
+  // Only add the goal if it's not already checked
+  if (!currentGoals.includes(selectedGoal.value.title) && selectedGoal.value.title) {
+    // Add the selected goal to the list of achieved goals
+    const updatedGoals = [...currentGoals, selectedGoal.value.title];
+    
+    // Save the updated record
+    await habitStorage.value.addRecord({
+      date: today,
+      achievedGoals: updatedGoals
+    });
+  }
 };
 
 onMounted(async () => {
@@ -82,6 +96,7 @@ onMounted(async () => {
       <GoalSelector 
         class="py-4"
         :goals="goals.map(g=>g.title)" 
+        :descriptions="goals.map(g=>g.description)"
         @goalSelected="handleGoalSelect"
       />
       

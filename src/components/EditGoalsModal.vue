@@ -92,35 +92,45 @@ const updateGoal = (updatedGoal: GoalRecord) => {
 
 <template>
   <BaseModal title="Edit Goals" @close="closeModal" :zIndex="40">
-    <input
-      v-model="newGoal"
-      type="text"
-      placeholder="Enter goal name"
-      class="w-full p-2 border rounded"
-    />
-
-    <div class="flex justify-end space-x-2 mt-4">
-      <button @click="submitGoal" class="px-4 py-2 bg-blue-500 text-white rounded">
-        Add Goal
-      </button>
+    <!-- Current Goals Section -->
+    <div v-if="sessionGoals.length > 0" class="mb-6">
+      <h3 class="font-medium text-lg mb-2 text-gray-700">Current Goals</h3>
+      <ul class="border rounded divide-y">
+        <li v-for="goal in sessionGoals" :key="goal.title" class="flex justify-between items-center p-3">
+          <span class="font-medium">{{ goal.title }}</span>
+          <div class="flex gap-2">
+            <button
+              class="px-2 py-1 bg-green-500 text-white rounded" 
+              @click="openGoalEditor(goal)"
+            > 
+              Edit 
+            </button>
+            <button @click="removeGoal(goal)" class="px-2 py-1 bg-red-500 text-white rounded">
+              Remove
+            </button>
+          </div>
+        </li>
+      </ul>
     </div>
 
-    <ul class="mt-4">
-      <li v-for="goal in sessionGoals" :key="goal.title" class="flex justify-between items-center p-2 border-b">
-        {{ goal.title }}
-        <div class="flex gap-2">
-          <button
-            class="px-2 py-1 bg-green-500 text-white rounded" 
-            @click="openGoalEditor(goal)"
-          > 
-            Edit 
-          </button>
-          <button @click="removeGoal(goal)" class="px-2 py-1 bg-red-500 text-white rounded">
-            Remove
+    <!-- Add New Goal Section -->
+    <div class="mt-6">
+      <h3 class="font-medium text-lg mb-2 text-gray-700">Add New Goal</h3>
+      <div class="border rounded p-3">
+        <input
+          v-model="newGoal"
+          type="text"
+          placeholder="Enter goal name"
+          class="w-full p-2 border rounded mb-3"
+        />
+
+        <div class="flex justify-end">
+          <button @click="submitGoal" class="px-4 py-2 bg-blue-500 text-white rounded">
+            Add Goal
           </button>
         </div>
-      </li>
-    </ul>
+      </div>
+    </div>
 
     <template #primary-action>
       <button @click="saveChanges" class="px-4 py-2 bg-green-500 text-white rounded">
