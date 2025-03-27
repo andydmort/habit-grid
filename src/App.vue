@@ -96,6 +96,7 @@ onMounted(async () => {
       <GoalSelector 
         class="py-4"
         :goals="goals.map(g=>g.title)" 
+        :descriptions="goals.map(g=>g.description)"
         @goalSelected="handleGoalSelect"
       />
       
